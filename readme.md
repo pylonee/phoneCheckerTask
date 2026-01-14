@@ -14,15 +14,10 @@
 
 ## Шаблон .env файла
 SECRET_KEY=твой ключ django
-
 DB_NAME=имя бд
-
 DB_USER=юзер
-
 DB_PASSWORD=пароль
-
 DB_HOST=localhost
-
 DB_PORT=5432
 
 ## Что можно добавить / не успел сделать
