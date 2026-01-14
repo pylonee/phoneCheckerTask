@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Проверка оператора</title>
+    <style>
+        body { font-family: Arial; max-width: 400px; margin: 50px auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        input, button { padding: 10px; width: 100%; font-size: 16px; }
+        .result { margin-top: 20px; padding: 15px; border-radius: 5px; }
+        .success { background: lightgreen; border: 1px solid black; }
+        .error { background: red; border: 1px solid black; }
+    </style>
+</head>
+<body>
+    <h2>Проверка оператора по номеру</h2>
+
+    <form id="phoneForm">
+        <div class="form-group">
+            <label>Номер телефона:</label>
+            <input type="tel" id="phone" placeholder="79173453223" required>
+            <small>Формат: 7XXXXXXXXXX (11 цифр)</small>
+        </div>
+        <button type="submit">Проверить</button>
+    </form>
+
+    <div id="result" class="result" style="display: none;"></div>
+
+    <script>
+        document.getElementById('phoneForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const phone = document.getElementById('phone').value.trim();
+            const resultDiv = document.getElementById('result');
+
+            resultDiv.style.display = 'none';
+            resultDiv.className = 'result';
+
+            const cleanPhone = phone.replace(/\D/g, '');
+            if (cleanPhone.length !== 11 || !cleanPhone.startsWith('7')) {
+                showError('Введите 11 цифр, начинающихся с 7');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/check-phone/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: cleanPhone })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && !data.error) {
+                    showSuccess(`
+                        <h3>Результат:</h3>
+                        <p><strong>Номер:</strong> ${data.phone}</p>
+                        <p><strong>Оператор:</strong> ${data.operator}</p>
+                        <p><strong>Регион:</strong> ${data.region}</p>
+                    `);
+                } else {
+                    showError(data.error || 'Ошибка сервера');
+                }
+            } catch (error) {
+                showError('Ошибка подключения к серверу');
+            }
+        });
+
+        function showSuccess(html) {
+            const div = document.getElementById('result');
+            div.innerHTML = html;
+            div.classList.add('success');
+            div.style.display = 'block';
+        }
+
+        function showError(message) {
+            const div = document.getElementById('result');
+            div.innerHTML = `<h3>Ошибка:</h3><p>${message}</p>`;
+            div.classList.add('error');
+            div.style.display = 'block';
+        }
+
+        // Автоформатирование номера
+        document.getElementById('phone').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (!value.startsWith('7')) value = '7' + value.slice(1);
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
