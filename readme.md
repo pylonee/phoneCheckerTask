@@ -13,12 +13,12 @@
 Вывод оператора по введенному номеру телефона, если такой номер есть в базе. 
 
 ## Шаблон .env файла
-SECRET_KEY=твой ключ django
-DB_NAME=имя бд
-DB_USER=юзер
-DB_PASSWORD=пароль
-DB_HOST=localhost
-DB_PORT=5432
+SECRET_KEY=твой ключ django  
+DB_NAME=имя бд  
+DB_USER=юзер  
+DB_PASSWORD=пароль  
+DB_HOST=localhost  
+DB_PORT=5432  
 
 ## Что можно добавить / не успел сделать
 - Автообновление данных раз в день (celery). 
